@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import SubscriptionManager from './subscription-manager'
-import { ArrowRight, Calendar, Activity } from 'lucide-react'
+import { ArrowRight, Calendar, Activity, Dumbbell } from 'lucide-react'
 
 export default async function AthleteDetailPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params
@@ -74,13 +74,13 @@ export default async function AthleteDetailPage(props: { params: Promise<{ id: s
           />
         </div>
 
-        <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 shadow-xl">
-          <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-            <Activity className="h-5 w-5 text-amber-500" /> سجل التمارين
-          </h2>
-          <div className="text-center py-10 border border-dashed border-neutral-800 rounded-xl bg-neutral-950/50">
-            <p className="text-sm font-semibold text-neutral-500">وحدة تعيين التمارين ستتوفر قريباً.</p>
-          </div>
+        <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 shadow-xl lg:col-span-2 flex flex-col items-center justify-center min-h-[400px]">
+          <Dumbbell className="w-12 h-12 text-neutral-800 mb-4" />
+          <h3 className="text-xl font-bold text-white mb-2">البرامج التدريبية</h3>
+          <p className="text-neutral-500 text-sm text-center max-w-sm mb-6">قم ببناء وجدولة كورسات تدريبية مخصصة لهذا الرياضي على تقويمه الخاص.</p>
+          <Link href={`/admin/athletes/${athlete.id}/assign-course`} className="px-6 py-3 rounded-xl bg-amber-500 text-neutral-950 hover:brightness-110 font-black shadow-[0_0_15px_rgba(245,158,11,0.2)] transition-all">
+            بناء كورس تدريبي جديد
+          </Link>
         </div>
       </div>
     </div>

@@ -58,3 +58,56 @@ export async function assignSubscription(formData: FormData) {
     return { error: 'حدث خطأ أثناء حفظ الاشتراك.' }
   }
 }
+
+export async function assignCourseToAthlete(athleteId: string, courseData: any) {
+  const supabase = await createClient()
+
+  try {
+    const { startDate, days } = courseData
+    const start = new Date(startDate)
+
+    for (let i = 0; i < days.length; i++) {
+      const day = days[i]
+      const current = new Date(start)
+      current.setDate(start.getDate() + i)
+      const dateString = current.toISOString().split('T')[0]
+
+      // Insert Workout
+      const { data: workout, error: wError } = await supabase
+        .from('workouts')
+        .insert({
+          athlete_id: athleteId,
+          date: dateString,
+          notes: day.name || (day.isRest ? 'يوم راحة' : 'يوم تدريب')
+        })
+        .select()
+        .single()
+
+      if (wError) throw wError
+
+      // Insert Exercises if not a rest day
+      if (!day.isRest && day.exercises && day.exercises.length > 0) {
+        const exercisesToInsert = day.exercises.map((ex: any, idx: number) => ({
+          workout_id: workout.id,
+          exercise_id: ex.exerciseId,
+          sets: ex.sets,
+          reps: ex.reps,
+          weight_target: ex.weight_target || null,
+          order_index: idx
+        }))
+
+        const { error: eError } = await supabase
+          .from('workout_exercises')
+          .insert(exercisesToInsert)
+
+        if (eError) throw eError
+      }
+    }
+
+    revalidatePath(`/admin/athletes/${athleteId}`)
+    return { success: true }
+  } catch (err: any) {
+    console.error('Course Assignment Error:', err)
+    return { error: 'حدث خطأ أثناء حفظ الكورس.' }
+  }
+}

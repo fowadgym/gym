@@ -28,16 +28,18 @@ export default async function PortalDashboardPage() {
     daysLeft = Math.max(0, Math.ceil(diff / (1000 * 3600 * 24)))
   }
 
-  // Fetch today's workout
+  // Fetch all upcoming workouts (the course)
   const todayStr = new Date().toISOString().split('T')[0]
   const { data: workouts } = await supabase
     .from('workouts')
-    .select('id, notes, workout_exercises(id)')
+    .select('id, date, notes, workout_exercises(id)')
     .eq('athlete_id', user?.id)
-    .eq('date', todayStr)
-    .limit(1)
+    .gte('date', todayStr)
+    .order('date', { ascending: true })
+    .limit(30)
   
-  const todayWorkout = workouts?.[0]
+  const todayWorkout = workouts?.find(w => w.date === todayStr)
+  const futureWorkouts = workouts?.filter(w => w.date !== todayStr) || []
   const totalExercises = todayWorkout?.workout_exercises?.length || 0
 
   return (
@@ -106,6 +108,37 @@ export default async function PortalDashboardPage() {
           </div>
         )}
       </div>
+
+      {/* Upcoming Course Days */}
+      {futureWorkouts && futureWorkouts.length > 0 && (
+        <div className="bg-neutral-900/40 backdrop-blur-xl border border-neutral-800/50 rounded-3xl p-6 shadow-2xl">
+          <div className="flex items-center gap-2 text-neutral-400 mb-5">
+            <Calendar className="h-5 w-5 text-amber-500" />
+            <span className="text-sm font-bold uppercase tracking-wider">الأيام القادمة من الكورس</span>
+          </div>
+          <div className="space-y-3">
+            {futureWorkouts.map(w => (
+              <div key={w.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-neutral-950/50 p-4 rounded-xl border border-neutral-800/80">
+                <div className="flex flex-col">
+                  <span className="text-white font-bold text-base">{w.notes || 'يوم تدريب'}</span>
+                  <span className="text-xs text-neutral-500 mt-1">{new Date(w.date).toLocaleDateString('ar-EG', { weekday: 'long', month: 'short', day: 'numeric' })}</span>
+                </div>
+                <div>
+                  {(w.workout_exercises && w.workout_exercises.length > 0) ? (
+                    <span className="text-xs font-bold text-amber-500 bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 rounded-lg whitespace-nowrap">
+                      {w.workout_exercises.length} تمارين
+                    </span>
+                  ) : (
+                    <span className="text-xs font-bold text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-3 py-1.5 rounded-lg whitespace-nowrap">
+                      يوم راحة
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
