@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
+import SubscriptionManager from './subscription-manager'
 import { ArrowRight, Calendar, Activity } from 'lucide-react'
 
 export default async function AthleteDetailPage(props: { params: Promise<{ id: string }> }) {
@@ -66,6 +67,11 @@ export default async function AthleteDetailPage(props: { params: Promise<{ id: s
               <p className="text-sm font-semibold text-neutral-500">لم يتم العثور على اشتراكات لهذا الرياضي.</p>
             </div>
           )}
+
+          <SubscriptionManager 
+            athleteId={athlete.id} 
+            activeSub={subscriptions?.find((s) => s.is_active) as any} 
+          />
         </div>
 
         <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 shadow-xl">
