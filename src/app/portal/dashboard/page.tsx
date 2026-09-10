@@ -119,28 +119,41 @@ export default async function PortalDashboardPage() {
           <div className="space-y-3">
             {futureWorkouts.map(w => {
               const hasExercises = w.workout_exercises && w.workout_exercises.length > 0;
-              const Wrapper = hasExercises ? Link : 'div';
-              const wrapperProps = hasExercises ? { href: `/portal/workout?id=${w.id}` } : {};
+              
+              const InnerContent = (
+                <>
+                  <div className="flex flex-col">
+                    <span className={`font-bold text-base transition-colors ${hasExercises ? 'text-white group-hover:text-amber-500' : 'text-neutral-300'}`}>{w.notes || 'يوم تدريب'}</span>
+                    <span className="text-xs text-neutral-500 mt-1">{new Date(w.date).toLocaleDateString('ar-EG', { weekday: 'long', month: 'short', day: 'numeric' })}</span>
+                  </div>
+                  <div>
+                    {hasExercises ? (
+                      <span className="text-xs font-bold text-amber-500 bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 rounded-lg whitespace-nowrap">
+                        {w.workout_exercises.length} تمارين
+                      </span>
+                    ) : (
+                      <span className="text-xs font-bold text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-3 py-1.5 rounded-lg whitespace-nowrap">
+                        يوم راحة
+                      </span>
+                    )}
+                  </div>
+                </>
+              );
+              
+              if (hasExercises) {
+                return (
+                  <Link key={w.id} href={`/portal/workout?id=${w.id}`} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-neutral-950/50 p-4 rounded-xl border border-neutral-800/80 hover:bg-neutral-900 hover:border-amber-500/30 transition-all cursor-pointer group">
+                    {InnerContent}
+                  </Link>
+                );
+              }
               
               return (
-              <Wrapper key={w.id} {...wrapperProps} className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-neutral-950/50 p-4 rounded-xl border border-neutral-800/80 ${hasExercises ? 'hover:bg-neutral-900 hover:border-amber-500/30 transition-all cursor-pointer group' : ''}`}>
-                <div className="flex flex-col">
-                  <span className={`font-bold text-base transition-colors ${hasExercises ? 'text-white group-hover:text-amber-500' : 'text-neutral-300'}`}>{w.notes || 'يوم تدريب'}</span>
-                  <span className="text-xs text-neutral-500 mt-1">{new Date(w.date).toLocaleDateString('ar-EG', { weekday: 'long', month: 'short', day: 'numeric' })}</span>
+                <div key={w.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-neutral-950/50 p-4 rounded-xl border border-neutral-800/80">
+                  {InnerContent}
                 </div>
-                <div>
-                  {hasExercises ? (
-                    <span className="text-xs font-bold text-amber-500 bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 rounded-lg whitespace-nowrap">
-                      {w.workout_exercises.length} تمارين
-                    </span>
-                  ) : (
-                    <span className="text-xs font-bold text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-3 py-1.5 rounded-lg whitespace-nowrap">
-                      يوم راحة
-                    </span>
-                  )}
-                </div>
-              </Wrapper>
-            )})}
+              );
+            })}
           </div>
         </div>
       )}
