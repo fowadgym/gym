@@ -5,14 +5,15 @@ export const metadata = {
   title: 'تمرين اليوم | فؤاد جيم',
 }
 
-export default async function WorkoutPage() {
+export default async function WorkoutPage(props: { searchParams: Promise<{ id?: string }> }) {
+  const searchParams = await props.searchParams
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   const todayStr = new Date().toISOString().split('T')[0]
   
-  // Fetch today's workout
-  const { data: workouts } = await supabase
+  // Fetch workout
+  let query = supabase
     .from('workouts')
     .select(`
       id, 
@@ -31,8 +32,14 @@ export default async function WorkoutPage() {
       )
     `)
     .eq('athlete_id', user?.id)
-    .eq('date', todayStr)
-    .limit(1)
+    
+  if (searchParams.id) {
+    query = query.eq('id', searchParams.id)
+  } else {
+    query = query.eq('date', todayStr)
+  }
+
+  const { data: workouts } = await query.limit(1)
   
   const todayWorkout = workouts?.[0]
   
@@ -60,7 +67,9 @@ export default async function WorkoutPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-black text-white tracking-tight mb-3">روتين اليوم</h1>
+        <h1 className="text-3xl font-black text-white tracking-tight mb-3">
+          {searchParams.id ? 'روتين مخصص' : 'روتين اليوم'}
+        </h1>
         {todayWorkout.notes && (
           <p className="text-neutral-300 font-medium bg-neutral-900/40 backdrop-blur-xl border border-neutral-800/50 p-4 rounded-2xl leading-relaxed">
             {todayWorkout.notes}

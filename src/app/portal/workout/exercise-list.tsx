@@ -54,10 +54,9 @@ export function ExerciseList({ initialExercises }: { initialExercises: ExerciseI
               <video 
                 src={item.exercises.video_url} 
                 className={`absolute inset-0 w-full h-full object-cover transition-opacity ${item.completed ? 'opacity-30' : 'opacity-80 group-hover:opacity-100'}`}
-                preload="none"
+                preload="metadata"
                 controls
                 playsInline
-                poster="" // Could add a poster here
               />
             </div>
           )}
