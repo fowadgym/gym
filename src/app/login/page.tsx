@@ -1,8 +1,9 @@
-import { login, signup } from './actions'
+import { login, resetPassword } from './actions'
+import Image from 'next/image'
 
 export const metadata = {
-  title: 'Authentication | Elite Gym',
-  description: 'Log in or sign up to manage your Elite Gym membership.',
+  title: 'تسجيل الدخول | فؤاد جيم',
+  description: 'سجل الدخول أو أنشئ حساباً جديداً لإدارة عضويتك.',
 }
 
 export default async function LoginPage(props: { searchParams: Promise<{ message: string }> }) {
@@ -10,58 +11,79 @@ export default async function LoginPage(props: { searchParams: Promise<{ message
   const message = searchParams?.message
 
   return (
-    <main className="flex flex-col min-h-screen items-center justify-center bg-neutral-950 p-4">
-      <div className="w-full max-w-md bg-neutral-900 border border-neutral-800 rounded-2xl p-8 shadow-2xl">
-        <h1 className="text-3xl font-bold text-white mb-2 text-center">Member Portal</h1>
-        <p className="text-neutral-400 text-center mb-8">Sign in to manage your account</p>
+    <main className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden" dir="rtl">
+      {/* Background Image */}
+      <div className="absolute inset-0 z-0">
+        <Image
+          src="/hero-bg.webp"
+          alt="Gym facility background"
+          fill
+          priority
+          className="object-cover"
+        />
+        <div className="absolute inset-0 bg-neutral-950/80 backdrop-blur-[6px]"></div>
+      </div>
+
+      <div className="relative z-10 w-full max-w-md bg-neutral-900/40 backdrop-blur-xl border border-neutral-800/50 rounded-[2rem] p-8 sm:p-10 shadow-2xl">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-black text-white mb-2 tracking-tight">
+            بوابة <span className="text-amber-500">الأعضاء</span>
+          </h1>
+          <p className="text-neutral-400 font-medium text-lg">سجل الدخول لإدارة حسابك</p>
+        </div>
 
         {message && (
-          <div className="mb-6 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-500 text-sm text-center">
+          <div className="mb-6 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-500 text-sm text-center font-medium">
             {message}
           </div>
         )}
 
-        <form className="flex flex-col gap-5">
+        <form className="flex flex-col gap-5 text-right">
           <div className="flex flex-col gap-2">
-            <label htmlFor="email" className="text-sm font-medium text-neutral-300">
-              Email Address
+            <label htmlFor="email" className="text-sm font-bold text-neutral-300 px-1">
+              البريد الإلكتروني
             </label>
             <input
               id="email"
               name="email"
               type="email"
               required
-              className="px-4 py-3 bg-neutral-950 border border-neutral-800 rounded-xl text-white focus:outline-none focus:border-amber-500 transition-colors"
+              className="px-5 py-4 bg-neutral-950/60 border border-neutral-800/80 rounded-2xl text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all placeholder:text-neutral-600 text-left"
               placeholder="you@example.com"
+              dir="ltr"
             />
           </div>
 
           <div className="flex flex-col gap-2">
-            <label htmlFor="password" className="text-sm font-medium text-neutral-300">
-              Password
-            </label>
+            <div className="flex justify-between items-center px-1">
+              <label htmlFor="password" className="text-sm font-bold text-neutral-300">
+                كلمة المرور
+              </label>
+              <button
+                formAction={resetPassword}
+                formNoValidate
+                className="text-xs font-bold text-amber-500 hover:text-amber-400 hover:underline transition-all"
+              >
+                نسيت كلمة المرور؟
+              </button>
+            </div>
             <input
               id="password"
               name="password"
               type="password"
               required
-              className="px-4 py-3 bg-neutral-950 border border-neutral-800 rounded-xl text-white focus:outline-none focus:border-amber-500 transition-colors"
+              className="px-5 py-4 bg-neutral-950/60 border border-neutral-800/80 rounded-2xl text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all placeholder:text-neutral-600 text-left"
               placeholder="••••••••"
+              dir="ltr"
             />
           </div>
 
-          <div className="flex flex-col gap-3 mt-4">
+          <div className="flex flex-col gap-4 mt-6">
             <button
               formAction={login}
-              className="w-full py-3 px-4 bg-white text-black font-semibold rounded-xl hover:bg-neutral-200 transition-colors"
+              className="w-full py-4 px-6 bg-amber-500 text-neutral-950 font-black text-lg rounded-2xl hover:bg-amber-400 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_0_20px_rgba(245,158,11,0.15)]"
             >
-              Log In
-            </button>
-            <button
-              formAction={signup}
-              className="w-full py-3 px-4 bg-transparent border border-neutral-700 text-white font-semibold rounded-xl hover:bg-neutral-800 transition-colors"
-            >
-              Create Account
+              تسجيل الدخول
             </button>
           </div>
         </form>

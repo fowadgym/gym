@@ -33,13 +33,13 @@ export function ExerciseList({ initialExercises }: { initialExercises: ExerciseI
       } catch (error) {
         // Revert on error
         setExercises(initialExercises)
-        alert('Failed to save progress. Please try again.')
+        alert('فشل في حفظ التقدم. يرجى المحاولة مرة أخرى.')
       }
     })
   }
 
   if (exercises.length === 0) {
-    return <div className="text-center text-neutral-500 py-8">No exercises found for this workout.</div>
+    return <div className="text-center font-bold text-neutral-400 py-10 bg-neutral-900/40 backdrop-blur-xl border border-neutral-800/50 rounded-3xl">لا توجد تمارين لهذا الروتين.</div>
   }
 
   return (
@@ -47,13 +47,13 @@ export function ExerciseList({ initialExercises }: { initialExercises: ExerciseI
       {exercises.map((item) => (
         <div 
           key={item.id} 
-          className={`bg-neutral-900 border rounded-2xl overflow-hidden transition-colors ${item.completed ? 'border-green-500/30 bg-green-500/5' : 'border-neutral-800'}`}
+          className={`backdrop-blur-xl overflow-hidden transition-all duration-300 ${item.completed ? 'bg-green-500/10 border-green-500/30' : 'bg-neutral-900/40 border-neutral-800/50 hover:bg-neutral-900/60 hover:border-amber-500/30'} border rounded-3xl shadow-lg`}
         >
           {item.exercises?.video_url && (
-            <div className="aspect-video bg-neutral-950 relative border-b border-neutral-800/50 group">
+            <div className="aspect-video bg-neutral-950/80 relative border-b border-neutral-800/50 group">
               <video 
                 src={item.exercises.video_url} 
-                className={`absolute inset-0 w-full h-full object-cover transition-opacity ${item.completed ? 'opacity-30' : 'opacity-70'}`}
+                className={`absolute inset-0 w-full h-full object-cover transition-opacity ${item.completed ? 'opacity-30' : 'opacity-80 group-hover:opacity-100'}`}
                 preload="none"
                 controls
                 playsInline
@@ -62,34 +62,34 @@ export function ExerciseList({ initialExercises }: { initialExercises: ExerciseI
             </div>
           )}
           
-          <div className="p-4 sm:p-5 flex items-start gap-4">
+          <div className="p-5 flex items-start gap-4">
             <button 
               onClick={() => handleToggle(item.id, item.completed)}
-              className="mt-1 flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-amber-500 rounded-full"
+              className="mt-1 flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-amber-500 rounded-full transition-transform hover:scale-110 active:scale-95"
             >
               {item.completed ? (
-                <CheckCircle2 className="h-6 w-6 text-green-500" />
+                <CheckCircle2 className="h-7 w-7 text-green-500 drop-shadow-[0_0_10px_rgba(34,197,94,0.3)]" />
               ) : (
-                <Circle className="h-6 w-6 text-neutral-500 hover:text-amber-500 transition-colors" />
+                <Circle className="h-7 w-7 text-neutral-500 hover:text-amber-500 transition-colors" />
               )}
             </button>
             
             <div className="flex-1">
-              <h3 className={`font-semibold text-lg ${item.completed ? 'text-neutral-400 line-through' : 'text-white'}`}>
-                {item.exercises?.title || 'Unknown Exercise'}
+              <h3 className={`font-black text-xl tracking-tight transition-colors ${item.completed ? 'text-neutral-500 line-through' : 'text-white'}`}>
+                {item.exercises?.title || 'تمرين غير معروف'}
               </h3>
               
-              <div className="mt-2 flex flex-wrap gap-2">
-                <div className="px-3 py-1 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-neutral-300">
-                  <span className="text-neutral-500 mr-1">Sets</span>
-                  <span className="font-bold">{item.sets}</span>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <div className="px-4 py-1.5 bg-neutral-950/60 border border-neutral-800/80 rounded-xl text-sm font-medium text-neutral-300 flex items-center gap-1.5 shadow-inner">
+                  <span className="text-neutral-500">مجموعات</span>
+                  <span className="font-black text-white">{item.sets}</span>
                 </div>
-                <div className="px-3 py-1 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-neutral-300">
-                  <span className="text-neutral-500 mr-1">Reps</span>
-                  <span className="font-bold">{item.reps}</span>
+                <div className="px-4 py-1.5 bg-neutral-950/60 border border-neutral-800/80 rounded-xl text-sm font-medium text-neutral-300 flex items-center gap-1.5 shadow-inner">
+                  <span className="text-neutral-500">تكرارات</span>
+                  <span className="font-black text-white">{item.reps}</span>
                 </div>
                 {item.weight_target && (
-                  <div className="px-3 py-1 bg-neutral-950 border border-amber-500/20 text-amber-500 rounded-lg text-sm font-medium">
+                  <div className="px-4 py-1.5 bg-amber-500/10 border border-amber-500/20 text-amber-500 rounded-xl text-sm font-black shadow-[0_0_10px_rgba(245,158,11,0.05)]">
                     {item.weight_target}
                   </div>
                 )}

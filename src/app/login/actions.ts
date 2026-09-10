@@ -11,41 +11,48 @@ export async function login(formData: FormData) {
   const password = formData.get('password') as string
 
   if (!email || !password) {
-    redirect('/error?message=Missing email or password')
+    redirect('/login?message=' + encodeURIComponent('الرجاء إدخال البريد الإلكتروني وكلمة المرور'))
   }
 
-  const { error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
   })
 
   if (error) {
-    redirect('/error?message=' + encodeURIComponent(error.message))
+    // We use a generic message for security, or we could translate specific Supabase errors
+    redirect('/login?message=' + encodeURIComponent('البريد الإلكتروني أو كلمة المرور غير صحيحة'))
   }
 
   revalidatePath('/', 'layout')
+
+  const role = data.user?.app_metadata?.role
+
+  if (role === 'admin') {
+    redirect('/admin/dashboard')
+  } else if (role === 'coach') {
+    redirect('/coach/dashboard')
+  } else if (role === 'athlete') {
+    redirect('/portal/dashboard')
+  }
+
   redirect('/')
 }
 
-export async function signup(formData: FormData) {
+export async function resetPassword(formData: FormData) {
   const supabase = await createClient()
 
   const email = formData.get('email') as string
-  const password = formData.get('password') as string
 
-  if (!email || !password) {
-    redirect('/error?message=Missing email or password')
+  if (!email) {
+    redirect('/login?message=' + encodeURIComponent('الرجاء إدخال البريد الإلكتروني لإرسال رابط إعادة التعيين'))
   }
 
-  const { error } = await supabase.auth.signUp({
-    email,
-    password,
-  })
+  const { error } = await supabase.auth.resetPasswordForEmail(email)
 
   if (error) {
-    redirect('/error?message=' + encodeURIComponent(error.message))
+    redirect('/login?message=' + encodeURIComponent('حدث خطأ أثناء محاولة إرسال رابط إعادة التعيين'))
   }
 
-  revalidatePath('/', 'layout')
-  redirect('/')
+  redirect('/login?message=' + encodeURIComponent('تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني'))
 }

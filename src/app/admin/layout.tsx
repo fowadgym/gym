@@ -9,7 +9,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const navLinks = [
     { href: '/admin/dashboard', icon: Activity, label: 'Dashboard' },
-    { href: '/admin/athletes', icon: Users, label: 'Athletes' },
     { href: '/admin/exercises', icon: Dumbbell, label: 'Exercises' },
   ];
 
@@ -110,12 +109,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               </div>
             </div>
 
-            {/* Center: Live Gym Status */}
-            <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-neutral-800 border border-neutral-700">
-              <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
-              <span className="font-semibold text-xs text-neutral-400">Live Occupancy:</span>
-              <span className="font-extrabold text-xs text-amber-500">84% Capacity</span>
-            </div>
+
 
             {/* Right: Actions Cluster */}
             <div className="flex items-center gap-3">

@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { ExerciseList } from './exercise-list'
 
 export const metadata = {
-  title: 'Today\'s Workout | Elite Gym',
+  title: 'تمرين اليوم | فؤاد جيم',
 }
 
 export default async function WorkoutPage() {
@@ -38,12 +38,12 @@ export default async function WorkoutPage() {
   
   if (!todayWorkout) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
-        <div className="w-16 h-16 bg-neutral-900 rounded-full flex items-center justify-center text-2xl mb-2">
+      <div className="flex flex-col items-center justify-center py-20 text-center space-y-6">
+        <div className="w-20 h-20 bg-neutral-900/40 backdrop-blur-xl border border-neutral-800/50 rounded-full flex items-center justify-center text-4xl mb-2 shadow-2xl">
           🧘
         </div>
-        <h1 className="text-2xl font-bold text-white">No Workout Today</h1>
-        <p className="text-neutral-400">Enjoy your rest day! Proper recovery is just as important as the training itself.</p>
+        <h1 className="text-3xl font-black text-white tracking-tight">لا يوجد تمرين اليوم</h1>
+        <p className="text-neutral-400 font-medium max-w-xs leading-relaxed">استمتع بيوم الراحة! التعافي السليم لا يقل أهمية عن التدريب نفسه.</p>
       </div>
     )
   }
@@ -60,21 +60,23 @@ export default async function WorkoutPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-white mb-2">Today's Routine</h1>
+        <h1 className="text-3xl font-black text-white tracking-tight mb-3">روتين اليوم</h1>
         {todayWorkout.notes && (
-          <p className="text-neutral-400 text-sm">{todayWorkout.notes}</p>
+          <p className="text-neutral-300 font-medium bg-neutral-900/40 backdrop-blur-xl border border-neutral-800/50 p-4 rounded-2xl leading-relaxed">
+            {todayWorkout.notes}
+          </p>
         )}
       </div>
 
       {/* Progress Bar */}
-      <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-4">
-        <div className="flex justify-between text-sm mb-2">
-          <span className="text-neutral-400 font-medium">Progress</span>
-          <span className="text-amber-500 font-bold">{progressPercent}%</span>
+      <div className="bg-neutral-900/40 backdrop-blur-xl border border-neutral-800/50 rounded-3xl p-5 shadow-lg">
+        <div className="flex justify-between text-sm mb-3">
+          <span className="text-neutral-300 font-bold">التقدم</span>
+          <span className="text-amber-500 font-black">{progressPercent}%</span>
         </div>
-        <div className="h-3 w-full bg-neutral-950 rounded-full overflow-hidden">
+        <div className="h-4 w-full bg-neutral-950/60 rounded-full overflow-hidden border border-neutral-800/30">
           <div 
-            className="h-full bg-amber-500 transition-all duration-500 ease-out" 
+            className="h-full bg-gradient-to-r from-amber-600 to-amber-500 transition-all duration-700 ease-out" 
             style={{ width: `${progressPercent}%` }}
           />
         </div>

@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import { TrendingUp, AlertCircle, Terminal, Download, ArrowRight, ShieldCheck, Thermometer, Users, CreditCard } from 'lucide-react'
+import { TrendingUp, AlertCircle, Terminal, ArrowRight, Search, UserPlus, FileDown, Shield, Eye, Edit, MoreVertical, Users } from 'lucide-react'
 
 export const metadata = {
   title: 'Dashboard | Elite Admin',
@@ -22,6 +22,12 @@ export default async function AdminDashboardPage() {
     kpis = kpiData as any
   }
 
+  // Fetch all profiles for the athletes list
+  const { data: athletes } = await supabase
+    .from('profiles')
+    .select('*')
+    .order('created_at', { ascending: false })
+
   return (
     <div className="space-y-6">
       {/* Command Overview Hero Header */}
@@ -33,21 +39,10 @@ export default async function AdminDashboardPage() {
           </div>
           <h2 className="text-3xl font-black text-white tracking-tight">Command Overview</h2>
         </div>
-        {/* Live Action Cluster */}
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-neutral-900 border border-neutral-800 text-sm font-semibold text-neutral-400">
-            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-            <span>System Online</span>
-          </div>
-          <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-neutral-800 border border-neutral-700 hover:border-amber-500 text-white text-sm font-semibold transition-all">
-            <Download className="w-4 h-4" />
-            <span>Export</span>
-          </button>
-        </div>
       </section>
 
       {/* Hero KPI Metrics Row */}
-      <section aria-label="Key Performance Indicators" className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <section aria-label="Key Performance Indicators" className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* KPI Card 1: Total Athletes */}
         <div className="relative p-6 rounded-xl bg-neutral-900/60 backdrop-blur-xl border border-neutral-800 hover:border-amber-500/60 transition-all duration-300 hover:shadow-[0_0_25px_rgba(245,158,11,0.15)] group overflow-hidden">
           <div className="absolute -right-8 -top-8 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl group-hover:bg-amber-500/20 transition-all"></div>
@@ -73,36 +68,7 @@ export default async function AdminDashboardPage() {
           </div>
         </div>
 
-        {/* KPI Card 2: Active Subscriptions */}
-        <div className="relative p-6 rounded-xl bg-neutral-900/60 backdrop-blur-xl border border-neutral-800 hover:border-amber-500/60 transition-all duration-300 hover:shadow-[0_0_25px_rgba(245,158,11,0.15)] group overflow-hidden">
-          <div className="absolute -right-8 -top-8 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl group-hover:bg-amber-500/20 transition-all"></div>
-          <div className="flex items-center justify-between mb-4 relative z-10">
-            <span className="text-sm text-neutral-400 font-semibold">Active Subscriptions</span>
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-500 text-xs font-bold">
-              <TrendingUp className="w-3 h-3" />
-              +8.2% vs last mo
-            </span>
-          </div>
-          <div className="flex items-baseline gap-3 mb-4 relative z-10">
-            <span className="text-5xl font-black text-white tracking-tight">{kpis.total_active}</span>
-            <span className="text-sm text-neutral-400">{kpis.total_athletes > 0 ? Math.round((kpis.total_active / kpis.total_athletes) * 100) : 0}% rate</span>
-          </div>
-          {/* Tier Breakdown Indicator */}
-          <div className="pt-2 border-t border-neutral-800/50 space-y-2 relative z-10">
-            <div className="h-2 w-full bg-neutral-800 rounded-full overflow-hidden flex">
-              <div className="bg-amber-500 h-full" style={{ width: '58%' }}></div>
-              <div className="bg-amber-700 h-full" style={{ width: '27%' }}></div>
-              <div className="bg-neutral-600 h-full" style={{ width: '15%' }}></div>
-            </div>
-            <div className="flex justify-between items-center text-xs font-semibold text-neutral-400">
-              <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Iron 58%</span>
-              <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-amber-700"></span> Black 27%</span>
-              <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-neutral-600"></span> Base 15%</span>
-            </div>
-          </div>
-        </div>
-
-        {/* KPI Card 3: Expiring Soon */}
+        {/* KPI Card 2: Expiring Soon */}
         <div className="relative p-6 rounded-xl bg-neutral-900/60 backdrop-blur-xl border border-neutral-800 hover:border-red-500/60 transition-all duration-300 hover:shadow-[0_0_25px_rgba(239,68,68,0.15)] group overflow-hidden">
           <div className="absolute -right-8 -top-8 w-32 h-32 bg-red-500/10 rounded-full blur-2xl group-hover:bg-red-500/20 transition-all"></div>
           <div className="flex items-center justify-between mb-4 relative z-10">
@@ -128,48 +94,118 @@ export default async function AdminDashboardPage() {
         </div>
       </section>
 
-      {/* Bottom Contextual Quick Matrix */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-2">
-        <div className="p-4 rounded-xl bg-neutral-900 border border-neutral-800 flex items-center gap-4">
-          <div className="w-10 h-10 rounded-lg bg-neutral-800 border border-neutral-700 flex items-center justify-center text-amber-500">
-            <ShieldCheck className="w-5 h-5" />
-          </div>
+      {/* --- Athletes Section --- */}
+      <div className="pt-8 space-y-6">
+        {/* Header & Quick Action */}
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
           <div>
-            <span className="block text-sm font-bold text-white">Access Gates</span>
-            <span className="text-xs font-semibold text-amber-500">All 4 Operational</span>
+            <div className="flex items-center gap-3 mb-1">
+              <h1 className="text-3xl font-black tracking-tight text-white">Athletes Roster</h1>
+              <span className="px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-500 text-xs font-bold">{athletes?.length || 0} Total</span>
+            </div>
+            <p className="text-neutral-400">Roster management, membership tiers, RFID credentials, and biometric access tracking.</p>
           </div>
-        </div>
-        
-        <div className="p-4 rounded-xl bg-neutral-900 border border-neutral-800 flex items-center gap-4">
-          <div className="w-10 h-10 rounded-lg bg-neutral-800 border border-neutral-700 flex items-center justify-center text-amber-500">
-            <Thermometer className="w-5 h-5" />
-          </div>
-          <div>
-            <span className="block text-sm font-bold text-white">Facility Climate</span>
-            <span className="text-xs font-semibold text-neutral-400">68.2°F • 42% Humidity</span>
-          </div>
-        </div>
-
-        <div className="p-4 rounded-xl bg-neutral-900 border border-neutral-800 flex items-center gap-4">
-          <div className="w-10 h-10 rounded-lg bg-neutral-800 border border-neutral-700 flex items-center justify-center text-amber-500">
-            <Users className="w-5 h-5" />
-          </div>
-          <div>
-            <span className="block text-sm font-bold text-white">On-Duty Coaches</span>
-            <span className="text-xs font-semibold text-amber-500">6 Active On Floor</span>
+          <div className="flex items-center gap-3 self-start lg:self-auto">
+            <button className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-neutral-900 border border-neutral-800 text-white font-semibold text-sm hover:bg-neutral-800 transition-colors active:scale-[0.98]">
+              <FileDown className="w-4 h-4" />
+              <span>Export CSV</span>
+            </button>
+            <button className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-amber-500 text-neutral-950 font-extrabold text-sm shadow-lg shadow-amber-500/25 hover:brightness-110 active:scale-[0.98] transition-all">
+              <UserPlus className="w-5 h-5" />
+              <span>Add Athlete</span>
+            </button>
           </div>
         </div>
 
-        <div className="p-4 rounded-xl bg-neutral-900 border border-neutral-800 flex items-center gap-4">
-          <div className="w-10 h-10 rounded-lg bg-neutral-800 border border-neutral-700 flex items-center justify-center text-amber-500">
-            <CreditCard className="w-5 h-5" />
+        {/* Filter & Search */}
+        <section className="p-3 rounded-xl bg-neutral-900/50 border border-neutral-800 flex flex-col md:flex-row items-center justify-between gap-3 shadow-md">
+          <div className="relative w-full md:w-96">
+            <Search className="absolute left-3.5 top-2.5 text-neutral-500 w-5 h-5" />
+            <input 
+              type="text" 
+              placeholder="Search by Name, phone..." 
+              className="w-full pl-10 pr-4 py-2 rounded-lg bg-neutral-900 border border-neutral-800 text-white text-sm focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition-all placeholder:text-neutral-500"
+            />
           </div>
-          <div>
-            <span className="block text-sm font-bold text-white">Pro Shop POS</span>
-            <span className="text-xs font-semibold text-neutral-400">$2,840 Today</span>
+          <div className="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto pb-1 md:pb-0 scrollbar-none">
+            <button className="px-3 py-1.5 rounded-lg bg-amber-500 text-neutral-950 text-xs font-bold transition-all shadow-sm">All</button>
+            <button className="px-3 py-1.5 rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-400 text-xs font-medium hover:bg-neutral-800 transition-colors">Active</button>
           </div>
-        </div>
-      </section>
+        </section>
+
+        {/* Table */}
+        <section className="rounded-2xl border border-neutral-800 bg-neutral-900/50 backdrop-blur-xl shadow-2xl overflow-hidden flex flex-col">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b border-neutral-800 bg-neutral-900/60 text-neutral-400 text-xs uppercase tracking-wider font-semibold">
+                  <th className="py-3.5 px-5" scope="col">Athlete</th>
+                  <th className="py-3.5 px-3" scope="col">ID / Phone</th>
+                  <th className="py-3.5 px-3" scope="col">Role</th>
+                  <th className="py-3.5 px-3" scope="col">Joined</th>
+                  <th className="py-3.5 pr-5 pl-3 text-right" scope="col">Quick Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-neutral-800 text-sm">
+                {athletes?.map((athlete) => (
+                  <tr key={athlete.id} className="group hover:bg-neutral-800/50 transition-colors duration-150">
+                    <td className="py-3.5 px-5">
+                      <div className="flex items-center gap-3">
+                        <div className="relative">
+                          <div className="w-10 h-10 rounded-full bg-neutral-800 ring-2 ring-amber-500/60 shadow-md shadow-amber-500/20 overflow-hidden flex-shrink-0 flex items-center justify-center text-amber-500 font-bold">
+                            {athlete.full_name?.charAt(0) || 'U'}
+                          </div>
+                          <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-green-500 ring-2 ring-neutral-950"></span>
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="font-bold text-white group-hover:text-amber-500 transition-colors">{athlete.full_name || 'Unknown User'}</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="py-3.5 px-3">
+                      <div className="flex flex-col">
+                        <span className="font-mono text-xs font-semibold text-white">{(athlete.id as string).substring(0, 8)}</span>
+                        <span className="font-mono text-[11px] text-neutral-400">{athlete.phone_number || 'No Phone'}</span>
+                      </div>
+                    </td>
+                    <td className="py-3.5 px-3">
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/40 text-amber-500 text-xs font-bold tracking-wide">
+                        <Shield className="w-3 h-3" />
+                        <span>{athlete.role === 'admin' ? 'HQ Admin' : athlete.role === 'coach' ? 'Coach' : 'Athlete'}</span>
+                      </span>
+                    </td>
+                    <td className="py-3.5 px-3">
+                      <div className="flex flex-col">
+                        <span className="text-xs font-semibold text-white">{new Date(athlete.created_at).toLocaleDateString()}</span>
+                      </div>
+                    </td>
+                    <td className="py-3.5 pr-5 pl-3 text-right">
+                      <div className="flex items-center justify-end gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
+                        <button className="p-1.5 rounded-lg hover:bg-neutral-800 text-neutral-400 hover:text-amber-500 transition-colors" title="View Profile">
+                          <Eye className="w-5 h-5" />
+                        </button>
+                        <button className="p-1.5 rounded-lg hover:bg-neutral-800 text-neutral-400 hover:text-amber-500 transition-colors" title="Edit Athlete">
+                          <Edit className="w-5 h-5" />
+                        </button>
+                        <button className="p-1.5 rounded-lg hover:bg-neutral-800 text-neutral-400 hover:text-white transition-colors" title="More Options">
+                          <MoreVertical className="w-5 h-5" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+                {(!athletes || athletes.length === 0) && (
+                  <tr>
+                    <td colSpan={5} className="py-8 text-center text-neutral-500">
+                      No athletes found.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
     </div>
   )
 }

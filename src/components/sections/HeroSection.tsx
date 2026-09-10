@@ -28,11 +28,8 @@ export function HeroSection() {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-          <Button href="#pricing" variant="primary" className="w-full sm:w-auto">
-            ابدأ تجربتك المجانية
-          </Button>
-          <Button href="#contact" variant="outline" className="w-full sm:w-auto">
-            عرض الجدول
+          <Button href="/login" variant="outline" className="w-full sm:w-auto">
+            تسجيل الدخول
           </Button>
         </div>
       </div>
