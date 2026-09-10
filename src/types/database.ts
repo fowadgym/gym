@@ -69,6 +69,8 @@ export interface Database {
           description: string | null
           targeted_muscles: string[] | null
           video_url: string | null
+          equipment: string | null
+          difficulty: string | null
           created_at: string
         }
         Insert: {
@@ -77,6 +79,8 @@ export interface Database {
           description?: string | null
           targeted_muscles?: string[] | null
           video_url?: string | null
+          equipment?: string | null
+          difficulty?: string | null
           created_at?: string
         }
         Update: {
@@ -85,6 +89,8 @@ export interface Database {
           description?: string | null
           targeted_muscles?: string[] | null
           video_url?: string | null
+          equipment?: string | null
+          difficulty?: string | null
           created_at?: string
         }
       }
