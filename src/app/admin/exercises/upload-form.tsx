@@ -9,9 +9,7 @@ export function UploadVideoForm() {
   const [uploading, setUploading] = useState(false)
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
-  const [muscleGroup, setMuscleGroup] = useState('')
-  const [equipment, setEquipment] = useState('')
-  const [difficulty, setDifficulty] = useState('مبتدئ')
+  const [fileName, setFileName] = useState('')
   
   const router = useRouter()
   const supabase = createClient()
@@ -64,9 +62,6 @@ export function UploadVideoForm() {
           title,
           description,
           video_url: publicUrl,
-          targeted_muscles: muscleGroup ? [muscleGroup] : null,
-          equipment: equipment || null,
-          difficulty: difficulty || null,
         })
 
       if (dbError) throw dbError
@@ -75,9 +70,7 @@ export function UploadVideoForm() {
       form.reset()
       setTitle('')
       setDescription('')
-      setMuscleGroup('')
-      setEquipment('')
-      setDifficulty('مبتدئ')
+      setFileName('')
       router.refresh() // Refresh RSC to show new exercise
 
     } catch (error: any) {
@@ -112,15 +105,32 @@ export function UploadVideoForm() {
               name="video"
               accept="video/mp4,video/webm"
               required
+              onChange={(e) => {
+                const file = e.target.files?.[0]
+                if (file) setFileName(file.name)
+                else setFileName('')
+              }}
               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
             />
-            <div className="w-10 h-10 rounded-full bg-neutral-900 flex items-center justify-center text-amber-500 group-hover:scale-110 transition-transform">
-              <CloudUpload className="w-5 h-5" />
-            </div>
-            <div className="flex flex-col relative z-0">
-              <span className="text-xs font-semibold text-white">اسحب الفيديو هنا أو <span className="text-amber-500 underline">تصفح الملفات</span></span>
-              <span className="text-[11px] text-neutral-500">حتى 50 ميجابايت MP4, WebM</span>
-            </div>
+            {fileName ? (
+              <div className="flex flex-col items-center justify-center text-center gap-1">
+                <div className="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center text-green-500 mb-1">
+                  <CloudUpload className="w-5 h-5" />
+                </div>
+                <span className="text-xs font-bold text-amber-500 max-w-full truncate px-4">{fileName}</span>
+                <span className="text-[10px] text-neutral-500">تم اختيار الفيديو (انقر للتغيير)</span>
+              </div>
+            ) : (
+              <>
+                <div className="w-10 h-10 rounded-full bg-neutral-900 flex items-center justify-center text-amber-500 group-hover:scale-110 transition-transform">
+                  <CloudUpload className="w-5 h-5" />
+                </div>
+                <div className="flex flex-col relative z-0">
+                  <span className="text-xs font-semibold text-white">اسحب الفيديو هنا أو <span className="text-amber-500 underline">تصفح الملفات</span></span>
+                  <span className="text-[11px] text-neutral-500">حتى 50 ميجابايت MP4, WebM</span>
+                </div>
+              </>
+            )}
           </div>
         </div>
 
@@ -137,60 +147,9 @@ export function UploadVideoForm() {
           />
         </div>
 
-        {/* Target Muscle Groups & Equipment */}
-        <div className="grid grid-cols-2 gap-3">
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs text-neutral-400 font-bold uppercase tracking-wider">المجموعة العضلية</label>
-            <div className="relative">
-              <select 
-                value={muscleGroup} 
-                onChange={e => setMuscleGroup(e.target.value)}
-                className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500 appearance-none"
-              >
-                <option value="">اختر المجموعة...</option>
-                <option value="أوتار الركبة / المؤخرة">أوتار الركبة / المؤخرة</option>
-                <option value="الصدر">الصدر</option>
-                <option value="الظهر / المجنص">الظهر / المجنص</option>
-              </select>
-            </div>
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs text-neutral-400 font-bold uppercase tracking-wider">المعدات</label>
-            <div className="relative">
-              <select 
-                value={equipment}
-                onChange={e => setEquipment(e.target.value)}
-                className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500 appearance-none"
-              >
-                <option value="">اختر المعدات...</option>
-                <option value="بار أولمبي">بار أولمبي</option>
-                <option value="دمبلز">دمبلز</option>
-                <option value="جهاز الكابل">جهاز الكابل</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        {/* Difficulty Level */}
-        <div className="flex flex-col gap-1.5">
-          <label className="text-xs text-neutral-400 font-bold uppercase tracking-wider">مستوى الصعوبة</label>
-          <div className="grid grid-cols-4 gap-1 p-1 rounded-lg bg-neutral-950 border border-neutral-800">
-            {['مبتدئ', 'متوسط', 'متقدم', 'نخبة'].map(level => (
-              <button 
-                key={level}
-                type="button" 
-                onClick={() => setDifficulty(level)}
-                className={`py-1.5 rounded-md text-xs font-semibold transition-colors ${difficulty === level ? 'bg-neutral-800 text-white shadow-sm' : 'text-neutral-400 hover:text-white'}`}
-              >
-                {level}
-              </button>
-            ))}
-          </div>
-        </div>
-
         {/* Description / Cues */}
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs text-neutral-400 font-bold uppercase tracking-wider">ملاحظات تدريبية</label>
+          <label className="text-xs text-neutral-400 font-bold uppercase tracking-wider">ملاحظات تدريبية <span className="text-neutral-500 font-normal">(اختياري)</span></label>
           <textarea 
             value={description}
             onChange={e => setDescription(e.target.value)}

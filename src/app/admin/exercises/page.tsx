@@ -31,17 +31,6 @@ export default async function ExercisesPage() {
               </div>
               <div className="p-4">
                 <h3 className="font-semibold text-white">{ex.title}</h3>
-                <div className="flex flex-wrap gap-1.5 mt-2">
-                  {ex.difficulty && (
-                    <span className="px-2 py-0.5 rounded-md bg-neutral-800 text-[10px] font-bold text-amber-500 border border-amber-500/20">{ex.difficulty}</span>
-                  )}
-                  {ex.equipment && (
-                    <span className="px-2 py-0.5 rounded-md bg-neutral-800 text-[10px] font-bold text-neutral-300 border border-neutral-700">{ex.equipment}</span>
-                  )}
-                  {ex.targeted_muscles?.map((muscle: string, i: number) => (
-                    <span key={i} className="px-2 py-0.5 rounded-md bg-neutral-800 text-[10px] font-bold text-neutral-300 border border-neutral-700">{muscle}</span>
-                  ))}
-                </div>
                 {ex.description && <p className="text-sm text-neutral-400 mt-2 line-clamp-2">{ex.description}</p>}
               </div>
             </div>

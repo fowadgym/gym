@@ -26,7 +26,7 @@ export default async function AdminDashboardPage() {
   // Fetch all profiles for the athletes list
   const { data: athletes } = await supabase
     .from('profiles')
-    .select('*')
+    .select('*, subscriptions(end_date, is_active)')
     .order('created_at', { ascending: false })
 
   return (
@@ -135,15 +135,32 @@ export default async function AdminDashboardPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-neutral-800 text-sm">
-                {athletes?.map((athlete) => (
-                  <tr key={athlete.id} className="group hover:bg-neutral-800/50 transition-colors duration-150">
+                {athletes?.map((athlete: any) => {
+                  let isExpiringSoon = false
+                  let isExpired = false
+                  const activeSub = athlete.subscriptions?.find((s: any) => s.is_active)
+                  
+                  if (activeSub) {
+                    const now = new Date()
+                    const nextWeek = new Date()
+                    nextWeek.setDate(now.getDate() + 7)
+                    const endDate = new Date(activeSub.end_date)
+                    if (endDate <= nextWeek && endDate >= now) {
+                      isExpiringSoon = true
+                    } else if (endDate < now) {
+                      isExpired = true
+                    }
+                  }
+
+                  return (
+                  <tr key={athlete.id} className={`group transition-colors duration-150 ${isExpiringSoon ? 'bg-red-500/10 hover:bg-red-500/20 shadow-[inset_4px_0_0_0_rgba(239,68,68,1)]' : isExpired ? 'bg-neutral-900/80 hover:bg-neutral-800/80 opacity-70' : 'hover:bg-neutral-800/50'}`}>
                     <td className="py-3.5 px-5">
                       <div className="flex items-center gap-3">
                         <div className="relative">
-                          <div className="w-10 h-10 rounded-full bg-neutral-800 ring-2 ring-amber-500/60 shadow-md shadow-amber-500/20 overflow-hidden flex-shrink-0 flex items-center justify-center text-amber-500 font-bold">
+                          <div className={`w-10 h-10 rounded-full bg-neutral-800 ring-2 ${isExpiringSoon ? 'ring-red-500/60 shadow-red-500/20 text-red-500' : 'ring-amber-500/60 shadow-amber-500/20 text-amber-500'} shadow-md overflow-hidden flex-shrink-0 flex items-center justify-center font-bold`}>
                             {athlete.full_name?.charAt(0) || 'م'}
                           </div>
-                          <span className="absolute bottom-0 end-0 w-2.5 h-2.5 rounded-full bg-green-500 ring-2 ring-neutral-950"></span>
+                          <span className={`absolute bottom-0 end-0 w-2.5 h-2.5 rounded-full ${isExpiringSoon ? 'bg-red-500 animate-pulse' : activeSub ? 'bg-green-500' : 'bg-neutral-600'} ring-2 ring-neutral-950`}></span>
                         </div>
                         <div className="flex flex-col">
                           <span className="font-bold text-white group-hover:text-amber-500 transition-colors">{athlete.full_name || 'مستخدم غير معروف'}</span>
@@ -181,7 +198,8 @@ export default async function AdminDashboardPage() {
                       </div>
                     </td>
                   </tr>
-                ))}
+                  )
+                })}
                 {(!athletes || athletes.length === 0) && (
                   <tr>
                     <td colSpan={5} className="py-8 text-center text-neutral-500">
