@@ -28,18 +28,43 @@ export default async function PortalDashboardPage() {
     daysLeft = Math.max(0, Math.ceil(diff / (1000 * 3600 * 24)))
   }
 
-  // Fetch all upcoming workouts (the course)
-  const todayStr = new Date().toISOString().split('T')[0]
-  const { data: workouts } = await supabase
+  // Find the active course for this athlete
+  const { data: latestWorkout } = await supabase
     .from('workouts')
-    .select('id, date, notes, workout_exercises(id)')
+    .select('course_id')
     .eq('athlete_id', user?.id)
-    .gte('date', todayStr)
-    .order('date', { ascending: true })
-    .limit(30)
+    .not('course_id', 'is', null)
+    .order('date', { ascending: false })
+    .limit(1)
+
+  const todayStr = new Date().toISOString().split('T')[0]
+  let workouts = []
   
-  const todayWorkout = workouts?.find(w => w.date === todayStr)
-  const futureWorkouts = workouts?.filter(w => w.date !== todayStr) || []
+  if (latestWorkout?.[0]?.course_id) {
+    // Fetch upcoming workouts ONLY for the active course
+    const { data: courseWorkouts } = await supabase
+      .from('workouts')
+      .select('id, date, notes, workout_exercises(id)')
+      .eq('course_id', latestWorkout[0].course_id)
+      .gte('date', todayStr)
+      .order('date', { ascending: true })
+      
+    workouts = courseWorkouts || []
+  } else {
+    // Fallback for older data without course_id
+    const { data: fallbackWorkouts } = await supabase
+      .from('workouts')
+      .select('id, date, notes, workout_exercises(id)')
+      .eq('athlete_id', user?.id)
+      .gte('date', todayStr)
+      .order('date', { ascending: true })
+      .limit(30)
+      
+    workouts = fallbackWorkouts || []
+  }
+  
+  const todayWorkout = workouts.find(w => w.date === todayStr)
+  const futureWorkouts = workouts.filter(w => w.date !== todayStr) || []
   const totalExercises = todayWorkout?.workout_exercises?.length || 0
 
   return (
