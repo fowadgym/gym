@@ -23,13 +23,13 @@ interface CourseDay {
   }[]
 }
 
-export default function CourseBuilder({ athleteId, exercises }: { athleteId: string, exercises: Exercise[] }) {
+export default function CourseBuilder({ athleteId, exercises, initialCourse }: { athleteId: string, exercises: Exercise[], initialCourse?: any }) {
   const router = useRouter()
-  const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0])
+  const [startDate, setStartDate] = useState(initialCourse?.startDate || new Date().toISOString().split('T')[0])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   
-  const [days, setDays] = useState<CourseDay[]>([
+  const [days, setDays] = useState<CourseDay[]>(initialCourse?.days || [
     { id: '1', name: 'اليوم الأول', isRest: false, exercises: [] }
   ])
 
@@ -94,6 +94,7 @@ export default function CourseBuilder({ athleteId, exercises }: { athleteId: str
     }
 
     const payload = {
+      courseId: initialCourse?.courseId,
       startDate,
       days: days.map(d => ({
         name: d.name,

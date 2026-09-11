@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Cairo } from "next/font/google";
 
-export const runtime = 'edge';
 import "./globals.css";
 
 const inter = Inter({ 
@@ -14,7 +13,7 @@ const cairo = Cairo({
   subsets: ["arabic", "latin"],
   display: 'swap',
   variable: '--font-cairo',
-});
+})
 
 export const metadata: Metadata = {
   title: "إيليت جيم | اصنع أسطورتك",

@@ -63,20 +63,40 @@ export async function assignCourseToAthlete(athleteId: string, courseData: any) 
   const supabase = await createClient()
 
   try {
-    const { startDate, days } = courseData
+    const { startDate, days, courseId } = courseData
     const start = new Date(startDate)
+    const activeCourseId = courseId || crypto.randomUUID()
+    const todayStr = new Date().toISOString().split('T')[0]
+
+    // If editing existing course, perform Smart Replace
+    if (courseId) {
+      const { error: delError } = await supabase
+        .from('workouts')
+        .delete()
+        .eq('athlete_id', athleteId)
+        .eq('course_id', courseId)
+        .gte('date', todayStr)
+        
+      if (delError) throw delError
+    }
 
     for (let i = 0; i < days.length; i++) {
       const day = days[i]
       const current = new Date(start)
       current.setDate(start.getDate() + i)
       const dateString = current.toISOString().split('T')[0]
+      
+      // If smart replacing, skip inserting past days because they were preserved
+      if (courseId && dateString < todayStr) {
+        continue;
+      }
 
       // Insert Workout
       const { data: workout, error: wError } = await supabase
         .from('workouts')
         .insert({
           athlete_id: athleteId,
+          course_id: activeCourseId,
           date: dateString,
           notes: day.name || (day.isRest ? 'يوم راحة' : 'يوم تدريب')
         })
