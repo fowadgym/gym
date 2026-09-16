@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Upload, X, CloudUpload } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { getPresignedUrl } from './actions'
 
 export function UploadVideoForm() {
   const [uploading, setUploading] = useState(false)
@@ -37,23 +38,21 @@ export function UploadVideoForm() {
     try {
       setUploading(true)
       
-      const fileExt = file.name.split('.').pop()
-      const fileName = `${Math.random()}.${fileExt}`
-      const filePath = `videos/${fileName}`
+      // Request presigned URL from server action
+      const { presignedUrl, publicUrl } = await getPresignedUrl(file.name, file.type)
 
-      // Upload to Supabase Storage with caching
-      const { error: uploadError } = await supabase.storage
-        .from('exercise-videos')
-        .upload(filePath, file, {
-          cacheControl: '31536000',
-          upsert: false
-        })
+      // Upload directly to Cloudflare R2
+      const uploadResponse = await fetch(presignedUrl, {
+        method: 'PUT',
+        body: file,
+        headers: {
+          'Content-Type': file.type,
+        }
+      })
 
-      if (uploadError) throw uploadError
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('exercise-videos')
-        .getPublicUrl(filePath)
+      if (!uploadResponse.ok) {
+        throw new Error('فشل رفع الفيديو إلى خوادم Cloudflare')
+      }
 
       // Insert record into exercises table
       const { error: dbError } = await supabase

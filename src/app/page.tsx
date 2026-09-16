@@ -2,7 +2,7 @@ import { HeroSection } from '@/components/sections/HeroSection';
 import { FacilityGallery } from '@/components/sections/FacilityGallery';
 import { TrainerGrid } from '@/components/sections/TrainerGrid';
 import { PricingTable } from '@/components/sections/PricingTable';
-import { Testimonials } from '@/components/sections/Testimonials';
+import { MethodologySection } from '@/components/sections/MethodologySection';
 import { ContactLocation } from '@/components/sections/ContactLocation';
 import { FloatingWhatsApp } from '@/components/ui/FloatingWhatsApp';
 
@@ -18,7 +18,7 @@ export default function Home() {
       <FacilityGallery />
       <TrainerGrid />
       <PricingTable />
-      <Testimonials />
+      <MethodologySection />
       <ContactLocation />
       <FloatingWhatsApp />
     </main>
