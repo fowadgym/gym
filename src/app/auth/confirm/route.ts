@@ -25,6 +25,12 @@ export async function GET(request: NextRequest) {
     
     if (!error) {
       redirectTo.searchParams.delete('next')
+      
+      if (type === 'invite') {
+        redirectTo.pathname = '/set-password'
+        return NextResponse.redirect(redirectTo)
+      }
+
       return NextResponse.redirect(redirectTo)
     }
   }

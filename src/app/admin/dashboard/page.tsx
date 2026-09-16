@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { TrendingUp, AlertCircle, Terminal, ArrowLeft, Search, UserPlus, FileDown, Shield, Eye, Edit, MoreVertical, Users } from 'lucide-react'
+import { AddAthleteModal } from './add-athlete-modal'
 
 export const metadata = {
   title: 'لوحة القيادة | إدارة أيرون كور',
@@ -98,10 +99,7 @@ export default async function AdminDashboardPage() {
               <FileDown className="w-4 h-4" />
               <span>تصدير CSV</span>
             </button>
-            <button className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-amber-500 text-neutral-950 font-extrabold text-sm shadow-lg shadow-amber-500/25 hover:brightness-110 active:scale-[0.98] transition-all">
-              <UserPlus className="w-5 h-5" />
-              <span>إضافة رياضي</span>
-            </button>
+            <AddAthleteModal />
           </div>
         </div>
 
