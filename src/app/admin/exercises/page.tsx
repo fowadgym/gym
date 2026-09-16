@@ -3,7 +3,7 @@ import { UploadVideoForm } from './upload-form'
 import { PlayCircle } from 'lucide-react'
 
 export const metadata = {
-  title: 'التمارين | إدارة أيرون كور',
+  title: 'التمارين | إدارة فؤاد جيم',
 }
 
 export default async function ExercisesPage() {

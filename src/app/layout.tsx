@@ -16,8 +16,8 @@ const cairo = Cairo({
 })
 
 export const metadata: Metadata = {
-  title: "إيليت جيم | اصنع أسطورتك",
-  description: "منشأة تدريب عالية الأداء مع تدريب نخبة ومعدات عالمية المستوى.",
+  title: "فؤاد جيم | اصنع أسطورتك",
+  description: "نظام إدارة رياضي متكامل",
 };
 
 export default function RootLayout({

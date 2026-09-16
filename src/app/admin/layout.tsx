@@ -24,7 +24,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <Dumbbell className="w-6 h-6" />
             </div>
             <div>
-              <h1 className="font-extrabold text-amber-500 tracking-wider leading-tight text-sm">إدارة أيرون كور</h1>
+              <h1 className="font-extrabold text-amber-500 tracking-wider leading-tight text-sm">إدارة فؤاد جيم</h1>
               <p className="text-xs text-neutral-400 opacity-75">مركز التحكم</p>
             </div>
           </div>
@@ -95,7 +95,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             {/* Left: Search Bar & Product Identity */}
             <div className="flex items-center gap-6 flex-1 max-w-xl">
               <div className="lg:hidden flex items-center gap-2">
-                <span className="font-black text-sm tracking-widest text-amber-500">إدارة أيرون كور</span>
+                <span className="font-black text-sm tracking-widest text-amber-500">إدارة فؤاد جيم</span>
               </div>
               <div className="relative w-full hidden sm:block">
                 <span className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-neutral-500">

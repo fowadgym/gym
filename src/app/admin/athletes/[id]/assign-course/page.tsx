@@ -4,7 +4,7 @@ import { ArrowRight } from 'lucide-react'
 import CourseBuilder from './course-builder'
 
 export const metadata = {
-  title: 'تعيين كورس تدريبي | إدارة أيرون كور',
+  title: 'تعيين كورس تدريبي | إدارة فؤاد جيم',
 }
 
 export default async function AssignCoursePage(props: { params: Promise<{ id: string }> }) {

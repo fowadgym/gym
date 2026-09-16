@@ -64,7 +64,7 @@ export default function SetPasswordPage() {
           </div>
           <h1 className="text-2xl font-black text-white tracking-tight mb-2">إعداد كلمة المرور</h1>
           <p className="text-sm text-neutral-400">
-            مرحباً بك في أيرون كور! يرجى إعداد كلمة مرور خاصة بك لتتمكن من تسجيل الدخول لاحقاً.
+            مرحباً بك في فؤاد جيم! يرجى إعداد كلمة مرور خاصة بك لتتمكن من تسجيل الدخول لاحقاً.
           </p>
         </div>
 

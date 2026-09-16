@@ -4,7 +4,7 @@ import { TrendingUp, AlertCircle, Terminal, ArrowLeft, Search, UserPlus, FileDow
 import { AddAthleteModal } from './add-athlete-modal'
 
 export const metadata = {
-  title: 'لوحة القيادة | إدارة أيرون كور',
+  title: 'لوحة القيادة | إدارة فؤاد جيم',
 }
 
 export default async function AdminDashboardPage() {
