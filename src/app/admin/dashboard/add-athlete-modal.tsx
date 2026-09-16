@@ -78,8 +78,9 @@ export function AddAthleteModal() {
               )}
               
               {success && (
-                <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20 text-green-500 text-sm font-semibold">
-                  تم إرسال دعوة التسجيل إلى البريد الإلكتروني بنجاح!
+                <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20 text-green-500 text-sm font-semibold flex flex-col gap-1">
+                  <span>تم إنشاء الحساب بنجاح!</span>
+                  <span className="text-white bg-neutral-900 px-2 py-1 rounded w-fit border border-neutral-700">كلمة المرور الافتراضية: 123456</span>
                 </div>
               )}
 

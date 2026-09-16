@@ -26,6 +26,12 @@ export async function login(formData: FormData) {
 
   revalidatePath('/', 'layout')
 
+  const requiresPasswordChange = data.user?.user_metadata?.requires_password_change
+
+  if (requiresPasswordChange) {
+    redirect('/set-password')
+  }
+
   const role = data.user?.app_metadata?.role
 
   if (role === 'admin') {

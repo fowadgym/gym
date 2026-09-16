@@ -27,19 +27,22 @@ export async function inviteAthlete(formData: FormData) {
     }
   })
 
-  // Check if the user already exists (optional, but inviteUserByEmail handles this if they exist but aren't confirmed)
-  // We will just send the invite
-  const { data, error } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
-    data: {
+  // Create the user with a default password
+  const { data, error } = await supabaseAdmin.auth.admin.createUser({
+    email,
+    password: '123456',
+    email_confirm: true,
+    user_metadata: {
       full_name: fullName,
       phone_number: phone,
-      role: 'athlete'
+      role: 'athlete',
+      requires_password_change: true
     }
   })
 
   if (error) {
-    console.error('Error inviting user:', error.message)
-    return { error: 'فشل إرسال الدعوة. تأكد من أن البريد الإلكتروني غير مسجل مسبقاً.' }
+    console.error('Error creating user:', error.message)
+    return { error: 'فشل إنشاء الحساب. قد يكون البريد الإلكتروني مسجل مسبقاً.' }
   }
 
   // The user is created in auth.users, now we need to ensure their profile is created
