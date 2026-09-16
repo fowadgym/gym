@@ -2,7 +2,6 @@
 
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
-import crypto from 'crypto'
 
 export async function getPresignedUrl(fileName: string, fileType: string) {
   if (!process.env.R2_ACCESS_KEY_ID || !process.env.R2_SECRET_ACCESS_KEY) {
