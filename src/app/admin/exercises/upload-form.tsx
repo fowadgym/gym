@@ -104,8 +104,13 @@ export function UploadVideoForm() {
               name="video"
               accept="video/mp4,video/webm"
               required
+              onClick={(e) => {
+                // Reset the value so that selecting the same file again still triggers onChange
+                e.currentTarget.value = ''
+              }}
               onChange={(e) => {
                 const file = e.target.files?.[0]
+                console.log('File selected:', file?.name, file?.type, file?.size)
                 if (file) setFileName(file.name)
                 else setFileName('')
               }}
