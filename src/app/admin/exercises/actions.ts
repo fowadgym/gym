@@ -3,12 +3,17 @@
 import { AwsClient } from 'aws4fetch'
 
 export async function getPresignedUrl(fileName: string, fileType: string) {
-  if (!process.env.R2_ACCESS_KEY_ID || !process.env.R2_SECRET_ACCESS_KEY) {
+  const accessKeyId = process.env.R2_ACCESS_KEY_ID || 'b06b8a10fcf50dbda8b6d0ffab343e50'
+  const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY || 'd35f2a17199e267b5c231a22ebf08b5bdd2910aae4c0fac23e9cdbebc51fcec9'
+  const s3Api = process.env.S3_API || 'https://58e002dd28fff5092d8c460b27040b74.r2.cloudflarestorage.com/videos'
+  const devUrl = process.env.PUPLIC_DEVELOPMENT_URL || 'https://pub-a47cdbe488fa40b79f210c8c35ccc622.r2.dev'
+
+  if (!accessKeyId || !secretAccessKey) {
     throw new Error('R2 credentials are not configured in production environment variables.')
   }
 
   // Parse endpoint and bucket name from the S3_API URL provided in .env
-  const s3Url = new URL(process.env.S3_API!)
+  const s3Url = new URL(s3Api)
   const endpoint = s3Url.origin 
   
   // Try to use R2_BUCKET_NAME if provided, otherwise extract from the path
@@ -17,8 +22,8 @@ export async function getPresignedUrl(fileName: string, fileType: string) {
   // We use aws4fetch instead of the official AWS SDK because aws4fetch is 100% compatible 
   // with Cloudflare Workers Edge Runtime, whereas the AWS SDK relies on Node.js modules.
   const aws = new AwsClient({
-    accessKeyId: process.env.R2_ACCESS_KEY_ID,
-    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
+    accessKeyId: accessKeyId,
+    secretAccessKey: secretAccessKey,
     service: 's3',
     region: 'auto',
   })
@@ -37,7 +42,7 @@ export async function getPresignedUrl(fileName: string, fileType: string) {
   })
 
   const presignedUrl = signedRequest.url
-  const publicUrl = `${process.env.PUPLIC_DEVELOPMENT_URL}/${uniqueName}`
+  const publicUrl = `${devUrl}/${uniqueName}`
 
   return { presignedUrl, publicUrl }
 }
