@@ -25,8 +25,8 @@ const STEPS = [
     title: 'بوابة المتدرب الذكية',
     description: 'تصلك التمارين يومياً عبر بوابتك الخاصة على هاتفك. تتبع تقدمك، سجل أوزانك، وشاهد مقاطع فيديو توضيحية لكل تمرين مباشرة في الصالة.',
     icon: Smartphone,
-    mockupUrl: 'https://images.unsplash.com/photo-1526506114642-54fcb51151c8?q=80&w=2067&auto=format&fit=crop',
-    color: 'from-emerald-500/20 to-neutral-900'
+    mockupUrl: '/trainee-portal.webp',
+    color: 'from-amber-500/20 to-neutral-900'
   }
 ]
 
