@@ -32,7 +32,6 @@ const STEPS = [
 
 export function MethodologySection() {
   const [activeStep, setActiveStep] = useState(0)
-  const containerRef = useRef<HTMLDivElement>(null)
   const stepRefs = useRef<(HTMLDivElement | null)[]>([])
 
   useEffect(() => {
@@ -49,7 +48,7 @@ export function MethodologySection() {
       },
       {
         root: null,
-        rootMargin: '-40% 0px -40% 0px', // Trigger when step is in the middle of screen
+        rootMargin: '-50% 0px -50% 0px',
         threshold: 0
       }
     )
@@ -62,63 +61,22 @@ export function MethodologySection() {
   }, [])
 
   return (
-    <section className="bg-neutral-950 relative w-full border-t border-neutral-900" ref={containerRef}>
-      {/* Title Area (Sticks to top on mobile, absolute on desktop) */}
-      <div className="w-full text-center pt-24 pb-12 lg:pb-0 z-20 relative lg:absolute lg:top-0 lg:pt-32 pointer-events-none">
+    <section className="bg-neutral-950 relative w-full border-t border-neutral-900 pb-24">
+      {/* Title Area */}
+      <div className="w-full text-center pt-24 pb-12 z-20 relative">
         <h2 className="text-4xl md:text-5xl font-black text-white mb-4">
-          منهجية <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-amber-300">إيليت</span>
+          منهجية <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-amber-300">فؤاد جيم</span>
         </h2>
         <p className="text-neutral-400 max-w-2xl mx-auto px-4 font-medium text-lg">
           نحن لا نقدم مجرد اشتراك نادي، بل نقدم تجربة تدريب متكاملة مدعومة بأحدث التقنيات لضمان وصولك لهدفك.
         </p>
       </div>
 
-      <div className="flex flex-col lg:flex-row w-full relative max-w-7xl mx-auto px-4 lg:px-8">
+      {/* The scrolling container */}
+      <div className="relative w-full max-w-7xl mx-auto px-4 lg:px-8">
         
-        {/* Sticky Media Container (Left side on LTR, Right side on RTL - wait, dir="rtl" so this is visually Right) */}
-        <div className="lg:w-1/2 lg:sticky lg:top-0 lg:h-screen flex items-center justify-center py-12 lg:py-0 z-10 order-1 lg:order-2">
-          <div className="relative w-full aspect-square md:aspect-[4/3] lg:aspect-[4/5] max-w-lg rounded-3xl overflow-hidden border border-neutral-800 shadow-2xl transition-all duration-700 ease-in-out group">
-            
-            {/* Background Gradient based on active step */}
-            <div className={`absolute inset-0 bg-gradient-to-br ${STEPS[activeStep].color} opacity-50 transition-colors duration-1000`} />
-            
-            {/* Images */}
-            {STEPS.map((step, index) => (
-              <img
-                key={step.id}
-                src={step.mockupUrl}
-                alt={step.title}
-                className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ease-in-out
-                  ${index === activeStep ? 'opacity-100 scale-100 filter-none' : 'opacity-0 scale-105 blur-sm'}
-                `}
-              />
-            ))}
-
-            {/* Overlay gradient for aesthetics */}
-            <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/90 via-neutral-950/20 to-transparent" />
-            
-            {/* Floating indicator */}
-            <div className="absolute bottom-6 left-6 right-6 flex justify-between items-end">
-              <div className="bg-neutral-950/80 backdrop-blur-md px-4 py-2 rounded-xl border border-neutral-800/50 flex items-center">
-                <span className="text-amber-500 font-black text-2xl leading-none">0{activeStep + 1}</span>
-                <span className="text-neutral-400 ml-2 font-medium">/ 03</span>
-              </div>
-              
-              <div className="bg-amber-500 text-black p-3 rounded-full shadow-[0_0_20px_rgba(245,158,11,0.3)] animate-pulse">
-                {
-                  activeStep === 0 ? <ClipboardList className="w-6 h-6" /> :
-                  activeStep === 1 ? <LayoutDashboard className="w-6 h-6" /> :
-                  <Smartphone className="w-6 h-6" />
-                }
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Scrolling Text Content (Visually Left in RTL) */}
-        <div className="lg:w-1/2 flex flex-col z-10 pb-24 lg:pb-0 order-2 lg:order-1">
-          {/* Spacer to push first step down on desktop to account for absolute title */}
-          <div className="hidden lg:block h-[30vh]" />
+        {/* Sticky wrapper */}
+        <div className="sticky top-24 lg:top-32 h-[80vh] min-h-[600px] flex items-center justify-center overflow-hidden z-10">
           
           {STEPS.map((step, index) => {
             const Icon = step.icon;
@@ -126,41 +84,71 @@ export function MethodologySection() {
             
             return (
               <div 
-                key={step.id}
-                ref={(el) => {
-                  stepRefs.current[index] = el;
-                }}
-                className={`flex flex-col justify-center min-h-[60vh] lg:min-h-screen py-12 lg:py-0 transition-all duration-700
-                  ${isActive ? 'opacity-100' : 'opacity-30 lg:opacity-20'}
+                key={step.id} 
+                className={`absolute inset-0 flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-16 transition-all duration-1000 ease-in-out
+                  ${isActive ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 translate-y-8 pointer-events-none'}
                 `}
               >
-                <div className="max-w-md mx-auto lg:mx-0 pr-4 lg:pr-12">
-                  <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 transition-all duration-500
-                    ${isActive ? 'bg-amber-500 text-black shadow-[0_0_30px_rgba(245,158,11,0.2)] scale-110' : 'bg-neutral-900 border border-neutral-800 text-neutral-500'}
-                  `}>
-                    <Icon className="w-8 h-8" />
+                
+                {/* Image Side */}
+                <div className="w-full lg:w-1/2 flex items-center justify-center order-1 lg:order-2">
+                  <div className="relative w-full max-w-md aspect-square md:aspect-[4/3] lg:aspect-[4/5] rounded-3xl overflow-hidden border border-neutral-800 shadow-2xl group">
+                    <div className={`absolute inset-0 bg-gradient-to-br ${step.color} opacity-50 z-10`} />
+                    <img
+                      src={step.mockupUrl}
+                      alt={step.title}
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/90 via-neutral-950/20 to-transparent z-10" />
+                    
+                    <div className="absolute bottom-6 left-6 right-6 flex justify-between items-end z-20">
+                      <div className="bg-neutral-950/80 backdrop-blur-md px-4 py-2 rounded-xl border border-neutral-800/50 flex items-center">
+                        <span className="text-amber-500 font-black text-2xl leading-none">0{index + 1}</span>
+                        <span className="text-neutral-400 ml-2 font-medium">/ 03</span>
+                      </div>
+                      
+                      <div className="bg-amber-500 text-black p-3 rounded-full shadow-[0_0_20px_rgba(245,158,11,0.3)] animate-pulse">
+                        <Icon className="w-6 h-6" />
+                      </div>
+                    </div>
                   </div>
-                  
-                  <h3 className={`text-3xl lg:text-4xl font-black mb-4 transition-colors duration-500
-                    ${isActive ? 'text-white' : 'text-neutral-500'}
-                  `}>
-                    {step.title}
-                  </h3>
-                  
-                  <p className={`text-lg leading-relaxed transition-colors duration-500
-                    ${isActive ? 'text-neutral-300' : 'text-neutral-600'}
-                  `}>
-                    {step.description}
-                  </p>
                 </div>
+
+                {/* Text Side */}
+                <div className="w-full lg:w-1/2 flex flex-col justify-center order-2 lg:order-1 text-center lg:text-right">
+                  <div className="max-w-md mx-auto lg:mx-0 lg:pr-12">
+                    <div className="w-16 h-16 rounded-2xl bg-amber-500 text-black shadow-[0_0_30px_rgba(245,158,11,0.2)] flex items-center justify-center mb-6 mx-auto lg:mx-0 lg:ml-auto">
+                      <Icon className="w-8 h-8" />
+                    </div>
+                    
+                    <h3 className="text-3xl lg:text-4xl font-black mb-4 text-white">
+                      {step.title}
+                    </h3>
+                    
+                    <p className="text-lg leading-relaxed text-neutral-300">
+                      {step.description}
+                    </p>
+                  </div>
+                </div>
+                
               </div>
             )
           })}
-          
-          {/* Bottom spacer so the last item can reach the middle of the screen */}
-          <div className="hidden lg:block h-[40vh]" />
         </div>
 
+        {/* Invisible Scroll Triggers */}
+        <div className="relative w-full z-0 pointer-events-none -mt-[80vh]">
+          {STEPS.map((step, index) => (
+            <div 
+              key={`trigger-${step.id}`}
+              ref={(el) => {
+                stepRefs.current[index] = el;
+              }}
+              className="h-[100vh] w-full" 
+            />
+          ))}
+        </div>
+        
       </div>
     </section>
   )
