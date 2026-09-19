@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { ClipboardList, LayoutDashboard, Smartphone } from 'lucide-react'
 
 const STEPS = [
@@ -32,58 +32,176 @@ const STEPS = [
 
 export function MethodologySection() {
   const [activeStep, setActiveStep] = useState(0)
-  const stepRefs = useRef<(HTMLDivElement | null)[]>([])
+  const [isLocked, setIsLocked] = useState(false)
+  const sectionRef = useRef<HTMLDivElement>(null)
+  const isTransitioning = useRef(false)
+  const touchStartY = useRef(0)
+  const accumulatedDelta = useRef(0)
 
+  const SCROLL_THRESHOLD = 80 // how much scroll/swipe needed to trigger next card
+
+  const goToStep = useCallback((newStep: number) => {
+    if (isTransitioning.current) return
+    if (newStep < 0 || newStep >= STEPS.length) return
+    
+    isTransitioning.current = true
+    setActiveStep(newStep)
+    accumulatedDelta.current = 0
+    
+    // Prevent rapid switching
+    setTimeout(() => {
+      isTransitioning.current = false
+    }, 800)
+  }, [])
+
+  const unlockAndScroll = useCallback((direction: 'up' | 'down') => {
+    setIsLocked(false)
+    accumulatedDelta.current = 0
+    
+    // Give the browser a frame to unlock scroll, then nudge it
+    requestAnimationFrame(() => {
+      window.scrollBy({ top: direction === 'down' ? 100 : -100, behavior: 'smooth' })
+    })
+  }, [])
+
+  // Detect when section enters viewport
   useEffect(() => {
+    const section = sectionRef.current
+    if (!section) return
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const index = stepRefs.current.findIndex((ref) => ref === entry.target)
-            if (index !== -1) {
-              setActiveStep(index)
-            }
+          if (entry.isIntersecting && entry.intersectionRatio > 0.3) {
+            // Section is in view, lock scrolling
+            setIsLocked(true)
+            accumulatedDelta.current = 0
           }
         })
       },
-      {
-        root: null,
-        rootMargin: '-40% 0px -40% 0px',
-        threshold: 0
-      }
+      { threshold: [0.3] }
     )
 
-    stepRefs.current.forEach((ref) => {
-      if (ref) observer.observe(ref)
-    })
-
+    observer.observe(section)
     return () => observer.disconnect()
   }, [])
 
-  return (
-    <section className="bg-neutral-950 relative w-full border-t border-neutral-900 pb-24">
-      {/* Title Area */}
-      <div className="w-full text-center pt-24 pb-8 lg:pb-12 z-20 relative">
-        <h2 className="text-3xl md:text-5xl font-black text-white mb-2 lg:mb-4">
-          منهجية <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-amber-300">فؤاد جيم</span>
-        </h2>
-        <p className="text-neutral-400 max-w-2xl mx-auto px-4 font-medium text-sm md:text-lg">
-          نحن لا نقدم مجرد اشتراك نادي، بل نقدم تجربة تدريب متكاملة مدعومة بأحدث التقنيات لضمان وصولك لهدفك.
-        </p>
-      </div>
+  // Handle wheel events (desktop)
+  useEffect(() => {
+    if (!isLocked) return
 
-      {/* The scrolling container */}
-      <div 
-        className="relative w-full max-w-7xl mx-auto px-4 lg:px-8"
-        style={{ height: `${STEPS.length * 100}vh` }}
-      >
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault()
+      
+      if (isTransitioning.current) return
+
+      accumulatedDelta.current += e.deltaY
+
+      if (accumulatedDelta.current > SCROLL_THRESHOLD) {
+        // Scrolling down
+        if (activeStep < STEPS.length - 1) {
+          goToStep(activeStep + 1)
+        } else {
+          // Last card, release scroll
+          unlockAndScroll('down')
+        }
+      } else if (accumulatedDelta.current < -SCROLL_THRESHOLD) {
+        // Scrolling up
+        if (activeStep > 0) {
+          goToStep(activeStep - 1)
+        } else {
+          // First card, release scroll
+          unlockAndScroll('up')
+        }
+      }
+    }
+
+    window.addEventListener('wheel', handleWheel, { passive: false })
+    return () => window.removeEventListener('wheel', handleWheel)
+  }, [isLocked, activeStep, goToStep, unlockAndScroll])
+
+  // Handle touch events (mobile)
+  useEffect(() => {
+    if (!isLocked) return
+
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartY.current = e.touches[0].clientY
+      accumulatedDelta.current = 0
+    }
+
+    const handleTouchMove = (e: TouchEvent) => {
+      e.preventDefault()
+      
+      if (isTransitioning.current) return
+
+      const touchY = e.touches[0].clientY
+      const diff = touchStartY.current - touchY // positive = swipe up (scroll down)
+
+      accumulatedDelta.current = diff
+
+      if (diff > SCROLL_THRESHOLD) {
+        // Swiping up (scroll down)
+        if (activeStep < STEPS.length - 1) {
+          goToStep(activeStep + 1)
+          touchStartY.current = touchY // reset
+        } else {
+          unlockAndScroll('down')
+        }
+      } else if (diff < -SCROLL_THRESHOLD) {
+        // Swiping down (scroll up)
+        if (activeStep > 0) {
+          goToStep(activeStep - 1)
+          touchStartY.current = touchY // reset
+        } else {
+          unlockAndScroll('up')
+        }
+      }
+    }
+
+    window.addEventListener('touchstart', handleTouchStart, { passive: true })
+    window.addEventListener('touchmove', handleTouchMove, { passive: false })
+    
+    return () => {
+      window.removeEventListener('touchstart', handleTouchStart)
+      window.removeEventListener('touchmove', handleTouchMove)
+    }
+  }, [isLocked, activeStep, goToStep, unlockAndScroll])
+
+  // Lock/unlock body scroll
+  useEffect(() => {
+    if (isLocked) {
+      document.body.style.overflow = 'hidden'
+      document.body.style.touchAction = 'none'
+    } else {
+      document.body.style.overflow = ''
+      document.body.style.touchAction = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+      document.body.style.touchAction = ''
+    }
+  }, [isLocked])
+
+  return (
+    <section 
+      ref={sectionRef}
+      className="bg-neutral-950 relative w-full border-t border-neutral-900"
+    >
+      {/* Full screen container */}
+      <div className="relative w-full min-h-screen flex flex-col items-center justify-center px-4 lg:px-8 py-16 lg:py-24">
         
-        {/* Sticky wrapper */}
-        <div 
-          className="sticky top-20 lg:top-32 w-full flex items-center justify-center overflow-hidden z-10"
-          style={{ height: '85vh', minHeight: '600px' }}
-        >
-          
+        {/* Title Area */}
+        <div className="w-full text-center mb-8 lg:mb-12 z-20">
+          <h2 className="text-3xl md:text-5xl font-black text-white mb-2 lg:mb-4">
+            منهجية <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-amber-300">فؤاد جيم</span>
+          </h2>
+          <p className="text-neutral-400 max-w-2xl mx-auto font-medium text-sm md:text-lg">
+            نحن لا نقدم مجرد اشتراك نادي، بل نقدم تجربة تدريب متكاملة مدعومة بأحدث التقنيات لضمان وصولك لهدفك.
+          </p>
+        </div>
+
+        {/* Cards Container */}
+        <div className="relative w-full max-w-6xl flex-1 flex items-center justify-center">
           {STEPS.map((step, index) => {
             const Icon = step.icon;
             const isActive = index === activeStep;
@@ -91,7 +209,7 @@ export function MethodologySection() {
             return (
               <div 
                 key={step.id} 
-                className={`absolute inset-0 flex flex-col lg:flex-row items-center justify-center gap-4 md:gap-8 lg:gap-16 transition-all duration-1000 ease-in-out
+                className={`absolute inset-0 flex flex-col lg:flex-row items-center justify-center gap-4 md:gap-8 lg:gap-16 transition-all duration-700 ease-in-out
                   ${isActive ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 translate-y-8 pointer-events-none'}
                 `}
               >
@@ -142,20 +260,17 @@ export function MethodologySection() {
           })}
         </div>
 
-        {/* Invisible Scroll Triggers */}
-        <div className="absolute top-0 left-0 right-0 w-full z-0 pointer-events-none">
-          {STEPS.map((step, index) => (
-            <div 
-              key={`trigger-${step.id}`}
-              ref={(el) => {
-                stepRefs.current[index] = el;
-              }}
-              className="w-full"
-              style={{ height: '100vh' }}
+        {/* Step Indicators */}
+        <div className="flex gap-2 mt-8 z-20">
+          {STEPS.map((_, index) => (
+            <div
+              key={index}
+              className={`h-1.5 rounded-full transition-all duration-500 ${
+                index === activeStep ? 'w-8 bg-amber-500' : 'w-3 bg-neutral-700'
+              }`}
             />
           ))}
         </div>
-        
       </div>
     </section>
   )
