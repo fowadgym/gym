@@ -73,10 +73,16 @@ export function MethodologySection() {
       </div>
 
       {/* The scrolling container */}
-      <div className="relative w-full max-w-7xl mx-auto px-4 lg:px-8">
+      <div 
+        className="relative w-full max-w-7xl mx-auto px-4 lg:px-8"
+        style={{ height: `${STEPS.length * 100}vh` }}
+      >
         
         {/* Sticky wrapper */}
-        <div className="sticky top-20 lg:top-32 h-[85dvh] lg:h-[80vh] lg:min-h-[600px] flex items-center justify-center overflow-hidden z-10">
+        <div 
+          className="sticky top-20 lg:top-32 w-full flex items-center justify-center overflow-hidden z-10"
+          style={{ height: '85vh', minHeight: '600px' }}
+        >
           
           {STEPS.map((step, index) => {
             const Icon = step.icon;
@@ -137,14 +143,15 @@ export function MethodologySection() {
         </div>
 
         {/* Invisible Scroll Triggers */}
-        <div className="relative w-full z-0 pointer-events-none -mt-[85dvh] lg:-mt-[80vh]">
+        <div className="absolute top-0 left-0 right-0 w-full z-0 pointer-events-none">
           {STEPS.map((step, index) => (
             <div 
               key={`trigger-${step.id}`}
               ref={(el) => {
                 stepRefs.current[index] = el;
               }}
-              className="h-[100dvh] lg:h-[100vh] w-full" 
+              className="w-full"
+              style={{ height: '100vh' }}
             />
           ))}
         </div>
