@@ -48,7 +48,7 @@ export function MethodologySection() {
       },
       {
         root: null,
-        rootMargin: '-50% 0px -50% 0px',
+        rootMargin: '-40% 0px -40% 0px',
         threshold: 0
       }
     )
@@ -63,11 +63,11 @@ export function MethodologySection() {
   return (
     <section className="bg-neutral-950 relative w-full border-t border-neutral-900 pb-24">
       {/* Title Area */}
-      <div className="w-full text-center pt-24 pb-12 z-20 relative">
-        <h2 className="text-4xl md:text-5xl font-black text-white mb-4">
+      <div className="w-full text-center pt-24 pb-8 lg:pb-12 z-20 relative">
+        <h2 className="text-3xl md:text-5xl font-black text-white mb-2 lg:mb-4">
           منهجية <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-amber-300">فؤاد جيم</span>
         </h2>
-        <p className="text-neutral-400 max-w-2xl mx-auto px-4 font-medium text-lg">
+        <p className="text-neutral-400 max-w-2xl mx-auto px-4 font-medium text-sm md:text-lg">
           نحن لا نقدم مجرد اشتراك نادي، بل نقدم تجربة تدريب متكاملة مدعومة بأحدث التقنيات لضمان وصولك لهدفك.
         </p>
       </div>
@@ -76,7 +76,7 @@ export function MethodologySection() {
       <div className="relative w-full max-w-7xl mx-auto px-4 lg:px-8">
         
         {/* Sticky wrapper */}
-        <div className="sticky top-24 lg:top-32 h-[85dvh] lg:h-[80vh] lg:min-h-[600px] flex items-center justify-center overflow-hidden z-10">
+        <div className="sticky top-20 lg:top-32 h-[85dvh] lg:h-[80vh] lg:min-h-[600px] flex items-center justify-center overflow-hidden z-10">
           
           {STEPS.map((step, index) => {
             const Icon = step.icon;
@@ -92,7 +92,7 @@ export function MethodologySection() {
                 
                 {/* Image Side */}
                 <div className="w-full lg:w-1/2 flex items-center justify-center order-1 lg:order-2">
-                  <div className="relative w-full max-w-md aspect-video md:aspect-square lg:aspect-[4/5] rounded-3xl overflow-hidden border border-neutral-800 shadow-2xl group">
+                  <div className="relative w-full max-w-md aspect-[2/1] sm:aspect-video lg:aspect-[4/5] rounded-2xl lg:rounded-3xl overflow-hidden border border-neutral-800 shadow-2xl group">
                     <div className={`absolute inset-0 bg-gradient-to-br ${step.color} opacity-50 z-10`} />
                     <img
                       src={step.mockupUrl}
