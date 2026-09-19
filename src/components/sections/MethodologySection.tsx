@@ -9,7 +9,7 @@ const STEPS = [
     title: 'التقييم الشامل',
     description: 'نبدأ رحلتك بتقييم دقيق لمستواك الحالي، أهدافك، وأي إصابات سابقة. نبني الأساس الصحيح قبل رفع أي وزن.',
     icon: ClipboardList,
-    mockupUrl: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?q=80&w=2070&auto=format&fit=crop',
+    mockupUrl: '/methodology-step1.webp',
     color: 'from-amber-500/20 to-neutral-900'
   },
   {
@@ -17,7 +17,7 @@ const STEPS = [
     title: 'تصميم الكورس المخصص',
     description: 'يقوم مدربونا باستخدام نظامنا البرمجي الخاص لتصميم كورس تدريبي مفصل خصيصاً لك، مع تحديد الأوزان والجلسات والتكرارات بدقة.',
     icon: LayoutDashboard,
-    mockupUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2070&auto=format&fit=crop',
+    mockupUrl: '/methodology-step2.webp',
     color: 'from-indigo-500/20 to-neutral-900'
   },
   {
@@ -221,6 +221,8 @@ export function MethodologySection() {
                     <img
                       src={step.mockupUrl}
                       alt={step.title}
+                      loading="lazy"
+                      decoding="async"
                       className="absolute inset-0 w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/90 via-neutral-950/20 to-transparent z-10" />

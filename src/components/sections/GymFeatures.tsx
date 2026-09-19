@@ -1,11 +1,11 @@
 'use client';
 
-import { 
-  Award, 
-  Dumbbell, 
-  Maximize2, 
-  HeartHandshake, 
-  CheckCircle2, 
+import {
+  Award,
+  Dumbbell,
+  Maximize2,
+  HeartHandshake,
+  CheckCircle2,
   Sparkles
 } from 'lucide-react';
 
@@ -18,7 +18,7 @@ const FEATURES = [
     description: 'كادر تدريبي ذو كفاءة استثنائية وخبرات دولية معتمدة، يضع بين يديك المعرفة العلمية والتطبيق العملي لضمان أدائك للتمارين بأعلى دقة، مع متابعة دورية مستمرة تمنع الإصابات وتسرّع وصولك لأهدافك.',
     icon: Award,
     highlights: [
-      'مدربون معتمدون دولياً بخبرات تنافسية عريقة',
+      'مدربون معتمدون بخبرات تنافسية عريقة',
       'تصحيح فوري للتكنيك الحركي والميكانيكي لكل تمرين',
       'متابعة دورية لتطور الأوزان، القياسات، ومعدلات الأداء'
     ],

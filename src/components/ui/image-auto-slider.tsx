@@ -75,6 +75,8 @@ export const ImageAutoSlider = ({ images: propImages }: ImageAutoSliderProps) =>
                   <img
                     src={image}
                     alt={`Certificate ${(index % row1Images.length) + 1}`}
+                    loading="lazy"
+                    decoding="async"
                     className="h-full w-auto object-contain"
                   />
                 </div>
@@ -95,6 +97,8 @@ export const ImageAutoSlider = ({ images: propImages }: ImageAutoSliderProps) =>
                   <img
                     src={image}
                     alt={`Certificate ${(index % row2Images.length) + mid + 1}`}
+                    loading="lazy"
+                    decoding="async"
                     className="h-full w-auto object-contain"
                   />
                 </div>
