@@ -54,8 +54,7 @@ export async function inviteAthlete(formData: FormData) {
       id: data.user.id,
       full_name: fullName,
       phone_number: phone,
-      role: 'athlete',
-      email: email
+      role: 'athlete'
     })
 
   if (profileError) {
