@@ -86,7 +86,7 @@ SECURITY DEFINER
 AS $$
   SELECT jsonb_build_object(
     'total_active', (SELECT count(*) FROM public.subscriptions WHERE is_active = true),
-    'expiring_soon', (SELECT count(*) FROM public.athletes_subscription_status WHERE days_remaining > 0 AND days_remaining <= 7),
+    'expiring_soon', (SELECT count(*) FROM public.athletes_subscription_status WHERE days_remaining > 0 AND days_remaining <= 3),
     'expired', (SELECT count(*) FROM public.athletes_subscription_status WHERE days_remaining <= 0),
     'total_athletes', (SELECT count(*) FROM public.profiles WHERE role = 'athlete')
   );

@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+﻿import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { TrendingUp, AlertCircle, Terminal, ArrowLeft, Search, UserPlus, FileDown, Shield, Eye, Edit, MoreVertical, Users } from 'lucide-react'
 import { AddAthleteModal } from './add-athlete-modal'
@@ -74,7 +74,7 @@ export default async function AdminDashboardPage() {
           <div className="pt-2 border-t border-neutral-800/50 flex items-center justify-between relative z-10">
             <div className="flex items-center gap-2">
               <AlertCircle className="w-4 h-4 text-amber-500" />
-              <span className="text-xs font-semibold text-neutral-400">حرج: الأيام الـ 7 القادمة</span>
+              <span className="text-xs font-semibold text-neutral-400">حرج: الأيام الـ 3 القادمة</span>
             </div>
             <button className="text-xs font-semibold text-amber-500 hover:underline flex items-center gap-1">
               مراجعة القائمة <ArrowLeft className="w-3 h-3" />
@@ -141,7 +141,7 @@ export default async function AdminDashboardPage() {
                   if (activeSub) {
                     const now = new Date()
                     const nextWeek = new Date()
-                    nextWeek.setDate(now.getDate() + 7)
+                    nextWeek.setDate(now.getDate() + 3)
                     const endDate = new Date(activeSub.end_date)
                     if (endDate <= nextWeek && endDate >= now) {
                       isExpiringSoon = true
@@ -188,7 +188,7 @@ export default async function AdminDashboardPage() {
                           <Eye className="w-5 h-5" />
                         </Link>
                         <a 
-                          href={athlete.phone_number ? `https://wa.me/${athlete.phone_number.replace(/\D/g, "")}` : "#"} 
+                          href={athlete.phone_number ? `https://wa.me/${athlete.phone_number.replace(/\D/g, "")}?text=${encodeURIComponent('مرحبا رياضينا العزيز تحية طيبة من المدرب الدولي كابتن فؤاد مدير قاعة فؤاد جيم \nمتبقي على اشتراكك 3 ايام فقط وفي حال التأخير يمنع الدخول الى القاعة منعا باتا وبدون احراجات\nنعتذر عن ازعاج حضراتكم الكرام')}` : "#"} 
                           target="_blank" 
                           rel="noopener noreferrer" 
                           className={`p-1.5 rounded-lg hover:bg-neutral-800 transition-colors ${athlete.phone_number ? "text-neutral-400 hover:text-green-500" : "text-neutral-600 cursor-not-allowed"}`} 
